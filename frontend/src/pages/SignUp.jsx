@@ -1,10 +1,11 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { FaUser, FaEnvelope, FaLock, FaEye, FaEyeSlash } from 'react-icons/fa';
+import { FaUser, FaEnvelope, FaLock, FaEye, FaEyeSlash, FaChalkboardTeacher, FaUserGraduate } from 'react-icons/fa';
 import { FcGoogle } from 'react-icons/fc';
 
 const SignUp = () => {
   const [showPassword, setShowPassword] = useState(false);
+  const [userType, setUserType] = useState(null);
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -22,18 +23,15 @@ const SignUp = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log('Form submitted:', formData);
-
+    console.log('Form submitted:', formData, 'User type:', userType);
   };
 
   const handleGoogleSignUp = () => {
     console.log("Google sign up clicked");
- 
   };
 
   return (
     <div className="min-h-screen flex bg-gray-50">
-    
       <div className="hidden lg:block w-1/2 relative bg-indigo-700">
         <div 
           className="absolute inset-0 bg-cover bg-center opacity-90"
@@ -52,7 +50,6 @@ const SignUp = () => {
         </div>
       </div>
 
-      
       <div className="w-full lg:w-1/2 flex items-center justify-center p-6">
         <div className="w-full max-w-md bg-white rounded-xl shadow-lg overflow-hidden">
           <div className="p-8">
@@ -61,8 +58,36 @@ const SignUp = () => {
               <p className="text-gray-600 mt-2">Get started with your free account</p>
             </div>
 
+            <div className="mb-6">
+              <label className="block text-sm font-medium text-gray-700 mb-3">I am a</label>
+              <div className="flex justify-center space-x-6">
+                <div 
+                  className={`flex flex-col items-center cursor-pointer transition-all ${userType === 'educator' ? 'transform scale-105' : ''}`}
+                  onClick={() => setUserType('educator')}
+                >
+                  <div className={`relative w-16 h-16 rounded-full flex items-center justify-center ${userType === 'educator' ? 'bg-indigo-100 border-2 border-indigo-500' : 'bg-gray-100 border-2 border-transparent'}`}>
+                    <FaChalkboardTeacher className={`text-2xl ${userType === 'educator' ? 'text-indigo-600' : 'text-gray-500'}`} />
+                    {userType === 'educator' && (
+                      <span className="absolute -top-2 -right-2 bg-yellow-400 text-xs font-bold px-2 py-1 rounded-full">PREMIUM</span>
+                    )}
+                  </div>
+                  <span className={`mt-2 text-sm font-medium ${userType === 'educator' ? 'text-indigo-600' : 'text-gray-600'}`}>Educator</span>
+                </div>
+                
+                <div 
+                  className={`flex flex-col items-center cursor-pointer transition-all ${userType === 'student' ? 'transform scale-105' : ''}`}
+                  onClick={() => setUserType('student')}
+                >
+                  <div className={`relative w-16 h-16 rounded-full flex items-center justify-center ${userType === 'student' ? 'bg-indigo-100 border-2 border-indigo-500' : 'bg-gray-100 border-2 border-transparent'}`}>
+                    <FaUserGraduate className={`text-2xl ${userType === 'student' ? 'text-indigo-600' : 'text-gray-500'}`} />
+                  </div>
+                  <span className={`mt-2 text-sm font-medium ${userType === 'student' ? 'text-indigo-600' : 'text-gray-600'}`}>Student</span>
+                </div>
+              </div>
+            </div>
+
             <form onSubmit={handleSubmit} className="space-y-5">
-         
+          
               <div>
                 <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">
                   Full Name
@@ -84,7 +109,7 @@ const SignUp = () => {
                 </div>
               </div>
 
-        
+          
               <div>
                 <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
                   Email
@@ -106,7 +131,6 @@ const SignUp = () => {
                 </div>
               </div>
 
-       
               <div>
                 <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">
                   Password
@@ -141,7 +165,7 @@ const SignUp = () => {
                 </div>
               </div>
 
-             
+         
               <div>
                 <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700 mb-1">
                   Confirm Password
@@ -164,7 +188,6 @@ const SignUp = () => {
                 </div>
               </div>
 
-     
               <div className="flex items-start">
                 <div className="flex items-center h-5">
                   <input
@@ -192,6 +215,7 @@ const SignUp = () => {
               <button
                 type="submit"
                 className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-3 px-4 rounded-lg transition duration-200 shadow-md hover:shadow-lg"
+                disabled={!userType}
               >
                 Create Account
               </button>
@@ -206,7 +230,6 @@ const SignUp = () => {
               </div>
             </div>
 
-       
             <button
               onClick={handleGoogleSignUp}
               className="w-full flex items-center justify-center gap-2 px-4 py-3 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors shadow-sm"
@@ -215,7 +238,6 @@ const SignUp = () => {
               <span className="font-medium">Continue with Google</span>
             </button>
 
-        
             <div className="mt-6 text-center">
               <p className="text-sm text-gray-600">
                 Already have an account?{' '}
