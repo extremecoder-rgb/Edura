@@ -1,5 +1,4 @@
 //create user model ->
-
 //create a user schema include name, about, email, password, role(student,educator), photoUrl, enrolled courses
 
 import mongoose from "mongoose";
@@ -27,12 +26,11 @@ const userSchema = new mongoose.Schema(
     role: {
       type: String,
       enum: ["student", "educator"],
-      default: "student",
+      required:true
     },
     photoUrl: {
       type: String,
-      default:
-        "https://static.vecteezy.com/system/resources/thumbnails/020/765/399/small_2x/default-profile-account-unknown-icon-black-silhouette-free-vector.jpg",
+      default:""
     },
     enrolledCourses: [
       {
