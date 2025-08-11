@@ -6,8 +6,10 @@ import Login from './pages/Login'
 import Landing from './pages/Landing';
 
 import {ToastContainer} from "react-toastify"
+import getCurrentUser from './customHooks/getCurrentUser'
 export const serverUrl = "http://localhost:8000"
-function App() {
+function App() { 
+  getCurrentUser()
   return (
     <>
     <ToastContainer />

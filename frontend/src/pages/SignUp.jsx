@@ -9,6 +9,8 @@ import axios from 'axios';
 import { toast } from 'react-toastify';
 import { ClipLoader } from 'react-spinners';
 import { serverUrl } from '../App';
+import { useDispatch } from 'react-redux';
+import { setUserdata } from '../redux/userSlice';
 
 const SignUp = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -17,6 +19,7 @@ const SignUp = () => {
   const [password,setPassword] = useState("")
   const [role, setRole] = useState("student"); 
   const [loading, setLoading] = useState(false);
+  const dispatch = useDispatch()
 
   const navigate = useNavigate();
 
@@ -29,7 +32,7 @@ const SignUp = () => {
         {name, password, email, role}, 
         {withCredentials: true}
       );
-      console.log(result.data);
+      dispatch(setUserdata(result.data))
       toast.success("Signup Successful");
       navigate("/home");
     } catch(error) {
