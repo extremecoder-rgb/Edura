@@ -8,7 +8,7 @@ import { serverUrl } from '../App';
 import axios from 'axios';
 import { toast } from 'react-toastify';
 import { useDispatch } from 'react-redux';
-import { setUserdata } from '../redux/userSlice';
+import { setUserData } from '../redux/userSlice';
 
 const Login = () => {
   const [showPassword, setShowPassword] = useState(false)
@@ -21,8 +21,8 @@ const Login = () => {
   const handleLogin = async () => {
     setLoading(true)
     try{
-      const result = await axios.post(serverUrl + "/api/auth/login", {email, password}, {withCredentials:true})
-      dispatch(setUserdata(result.data))
+      const result = await axios.post(serverUrl + "/api/auth/signin", {email, password}, {withCredentials:true})
+      dispatch(setUserData(result.data))
       setLoading(false)
       toast.success("Login Successfully")
       navigate("/home");

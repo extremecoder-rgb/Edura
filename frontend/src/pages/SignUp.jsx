@@ -10,7 +10,7 @@ import { toast } from 'react-toastify';
 import { ClipLoader } from 'react-spinners';
 import { serverUrl } from '../App';
 import { useDispatch } from 'react-redux';
-import { setUserdata } from '../redux/userSlice';
+import { setUserData } from '../redux/userSlice';
 
 const SignUp = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -32,7 +32,7 @@ const SignUp = () => {
         {name, password, email, role}, 
         {withCredentials: true}
       );
-      dispatch(setUserdata(result.data))
+      dispatch(setUserData(result.data))
       toast.success("Signup Successful");
       navigate("/home");
     } catch(error) {
