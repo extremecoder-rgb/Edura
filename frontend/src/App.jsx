@@ -4,6 +4,7 @@ import Home from './pages/Home'
 import SignUp from './pages/SignUp'
 import Login from './pages/Login'
 import Landing from './pages/Landing';
+import ForgetPassword from './pages/ForgetPassword'
 
 import {ToastContainer} from "react-toastify"
 import getCurrentUser from './customHooks/getCurrentUser'
@@ -22,6 +23,10 @@ function App() {
           <Route path="/signup" element={!userData ? <SignUp />: <Navigate to={"/"} />} />
           <Route path="/signin" element={<Login/>} />
           <Route path="/profile" element={userData ? <Profile /> :<Navigate to={"/signup"}/>} />
+          <Route
+  path="/forget"
+  element={!userData ? <ForgetPassword /> : <Navigate to={"/home"} />}
+/>
         </Routes>
     </>
   )

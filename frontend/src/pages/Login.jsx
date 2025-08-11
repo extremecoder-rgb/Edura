@@ -127,9 +127,7 @@ const Login = () => {
                 </label>
               </div>
 
-              <Link to="/forgot-password" className="text-sm text-indigo-600 hover:text-indigo-500">
-                Forgot password?
-              </Link>
+              <span className='text-[13px] cursor-pointer text-[#585757]' onClick={()=>navigate("/forget")}>Forget your password ?</span>
             </div>
 
             <button
