@@ -1,6 +1,3 @@
-//create user model ->
-//create a user schema include name, about, email, password, role(student,educator), photoUrl, enrolled courses
-
 import mongoose from "mongoose";
 
 const userSchema = new mongoose.Schema(
@@ -20,17 +17,20 @@ const userSchema = new mongoose.Schema(
     },
     password: {
       type: String,
-      required: [true, "Password is required"],
       minlength: [6, "Password must be at least 6 characters"],
+      required: function () {
+        // Only require password if not signing up with Google
+        return !this.googleAuth;
+      },
     },
     role: {
       type: String,
       enum: ["student", "educator"],
-      required:true
+      required: true,
     },
     photoUrl: {
       type: String,
-      default:""
+      default: "",
     },
     enrolledCourses: [
       {
@@ -38,19 +38,24 @@ const userSchema = new mongoose.Schema(
         ref: "Course",
       },
     ],
-    resetOtp:{
-      type:String
+    resetOtp: {
+      type: String,
     },
-    otpExpires:{
-      type:Date
+    otpExpires: {
+      type: Date,
     },
-    isOtpVerified:{
-      type:Boolean,
-      default:false
-    }
+    isOtpVerified: {
+      type: Boolean,
+      default: false,
+    },
+    googleAuth: {
+      type: Boolean,
+      default: false, 
+    },
   },
   { timestamps: true }
 );
+
 const User = mongoose.model("User", userSchema);
 
 export default User;

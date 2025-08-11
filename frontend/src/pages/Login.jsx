@@ -9,6 +9,8 @@ import axios from 'axios';
 import { toast } from 'react-toastify';
 import { useDispatch } from 'react-redux';
 import { setUserData } from '../redux/userSlice';
+import { signInWithPopup } from 'firebase/auth';
+import { auth, provider } from '../../utils/firebase'
 
 const Login = () => {
   const [showPassword, setShowPassword] = useState(false)
@@ -32,7 +34,23 @@ const Login = () => {
       toast.error(error.response.data.message)
     }
   }
-
+  const googleLogin = async () => {
+      try {
+        const response = await signInWithPopup(auth,provider)
+        let user = response.user
+        let name = user.displayName
+        let email = user.email
+        let role = ""
+  
+        const result = await axios.post(serverUrl + "/api/auth/googleauth",{name, email, role}, {withCredentials:true})
+        dispatch(setUserData(result.data))
+        navigate("/home");
+        toast.success("Login Successful");
+      } catch(error) {
+        console.log(error);
+        toast.error(error.response.data.message);
+      }
+    }
 
   return (
     <div className="min-h-screen flex bg-gray-50">
@@ -153,6 +171,7 @@ const Login = () => {
   
         <button
             className="w-full flex items-center justify-center gap-2 px-4 py-3 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors shadow-sm"
+            onClick={googleLogin}
           >
          <FcGoogle className="text-xl" />
             <span className="font-medium">Continue with Google</span>

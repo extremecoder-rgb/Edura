@@ -20,13 +20,10 @@ function App() {
         <Routes>
           <Route path="/" element={<Landing />} />
           <Route path="/home" element={<Home />} />
-          <Route path="/signup" element={!userData ? <SignUp />: <Navigate to={"/"} />} />
+          <Route path="/signup" element={!userData ? <SignUp />: <Navigate to={"/home"} />} />
           <Route path="/signin" element={<Login/>} />
           <Route path="/profile" element={userData ? <Profile /> :<Navigate to={"/signup"}/>} />
-          <Route
-  path="/forget"
-  element={!userData ? <ForgetPassword /> : <Navigate to={"/home"} />}
-/>
+          <Route path="/forget" element={!userData ? <ForgetPassword /> : <Navigate to={"/home"} />}/>
         </Routes>
     </>
   )

@@ -11,6 +11,8 @@ import { ClipLoader } from 'react-spinners';
 import { serverUrl } from '../App';
 import { useDispatch } from 'react-redux';
 import { setUserData } from '../redux/userSlice';
+import { signInWithPopup } from 'firebase/auth';
+import { auth, provider } from '../../utils/firebase'
 
 const SignUp = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -33,15 +35,32 @@ const SignUp = () => {
         {withCredentials: true}
       );
       dispatch(setUserData(result.data))
-      toast.success("Signup Successful");
+      setLoading(false)
       navigate("/home");
+      toast.success("Signup Successful");
+
     } catch(error) {
       console.log(error);
-      toast.error(error.response?.data?.message || "Signup failed");
-    } finally {
-      setLoading(false);
+      toast.error(error.response.data.message);
     }
   };
+
+  const googleSignUp = async () => {
+    try {
+      const response = await signInWithPopup(auth,provider)
+      let user = response.user
+      let name = user.displayName
+      let email = user.email
+
+      const result = await axios.post(serverUrl + "/api/auth/googleauth",{name, email, role}, {withCredentials:true})
+      dispatch(setUserData(result.data))
+      navigate("/home");
+      toast.success("Signup Successful");
+    } catch(error) {
+      console.log(error);
+      toast.error(error.response.data.message);
+    }
+  }
 
   return (
     <div className="min-h-screen flex bg-gray-50">
@@ -210,6 +229,7 @@ const SignUp = () => {
 
             <button
               className="w-full flex items-center justify-center gap-2 px-4 py-3 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors shadow-sm"
+              onClick={googleSignUp}
             >
               <FcGoogle className="text-xl" />
               <span className="font-medium">Continue with Google</span>
