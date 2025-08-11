@@ -2,36 +2,37 @@ import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { FaUser, FaLock, FaEye, FaEyeSlash } from 'react-icons/fa';
 import { FcGoogle } from 'react-icons/fc';
+import { useNavigate } from 'react-router-dom'
+import { ClipLoader } from 'react-spinners';
+import { serverUrl } from '../App';
+import axios from 'axios';
+import { toast } from 'react-toastify';
 
-const SignIn = () => {
-  const [showPassword, setShowPassword] = useState(false);
-  const [formData, setFormData] = useState({
-    email: '',
-    password: ''
-  });
+const Login = () => {
+  const [showPassword, setShowPassword] = useState(false)
+  const [email,setEmail] = useState("")
+  const [password,setPassword] = useState("")
+  const [loading, setLoading] = useState(false);
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: value
-    }));
-  };
+  const navigate = useNavigate()
+  const handleLogin = async () => {
+    setLoading(true)
+    try{
+      const result = await axios.post(serverUrl + "/api/auth/login", {email, password}, {withCredentials:true})
+      console.log(result.data)
+      setLoading(false)
+      toast.success("Login Successfully")
+      navigate("/home");
+    } catch(error) {
+      console.log(error)
+      setLoading(false)
+      toast.error(error.response.data.message)
+    }
+  }
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    console.log('Form submitted:', formData);
-   
-  };
-
-  const handleGoogleLogin = () => {
-    console.log("Google login clicked");
-
-  };
 
   return (
     <div className="min-h-screen flex bg-gray-50">
-   
       <div className="hidden lg:block w-1/2 relative bg-indigo-700">
         <div 
           className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1546410531-bb4caa6b424d?q=80&w=1171&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D')] bg-cover bg-center opacity-90"
@@ -50,7 +51,7 @@ const SignIn = () => {
             <p className="text-gray-600 mt-2">Access your learning dashboard</p>
           </div>
 
-          <form onSubmit={handleSubmit} className="space-y-5">
+          <form onSubmit={(e)=>e.preventDefault()} className="space-y-5">
     
             <div>
               <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
@@ -64,8 +65,8 @@ const SignIn = () => {
           id="email"          
            name="email"
           type="email"
-            value={formData.email}
-           onChange={handleChange}
+            onChange={(e) => setEmail(e.target.value)}
+            value={email}
             className="w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-5focus:border-transparent"
              placeholder="your@email.com"
              required
@@ -87,8 +88,8 @@ const SignIn = () => {
                   id="password"
                   name="password"
                   type={showPassword ? "text" : "password"}
-                  value={formData.password}
-                  onChange={handleChange}
+                  onChange={(e) => setPassword(e.target.value)}
+                  value={password}
                   className="w-full pl-10 pr-10 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
                   placeholder="••••••••"
                   required
@@ -131,8 +132,10 @@ const SignIn = () => {
             <button
               type="submit"
               className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-3 px-4 rounded-lg transition duration-200 shadow-md hover:shadow-lg"
+              disabled={loading}
+              onClick={handleLogin}
             >
-              Sign In
+              {loading ? <ClipLoader size={30} color='white'/>:"Sign In"}
             </button>
           </form>
 
@@ -148,7 +151,6 @@ const SignIn = () => {
 
   
         <button
-            onClick={handleGoogleLogin}
             className="w-full flex items-center justify-center gap-2 px-4 py-3 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors shadow-sm"
           >
          <FcGoogle className="text-xl" />
@@ -168,4 +170,4 @@ const SignIn = () => {
   );
 };
 
-export default SignIn;
+export default Login;
