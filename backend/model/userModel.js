@@ -50,7 +50,7 @@ const userSchema = new mongoose.Schema(
     },
     googleAuth: {
       type: Boolean,
-      default: false, 
+      default: false,
     },
   },
   { timestamps: true }

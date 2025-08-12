@@ -1,16 +1,16 @@
 //create local storage ->
 
-import multer from "multer"
+import multer from "multer";
 
 let storage = multer.diskStorage({
-    destination:(req,file,cb)=> {
-        cb(null, "./public")
-    },
-    filename:(req,file,cb)=> {
-        cb(null, file.originalname)
-    }
-})
+  destination: (req, file, cb) => {
+    cb(null, "./public");
+  },
+  filename: (req, file, cb) => {
+    cb(null, file.originalname);
+  },
+});
 
-const upload = multer({storage})
+const upload = multer({ storage });
 
-export default upload
+export default upload;
