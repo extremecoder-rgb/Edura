@@ -6,4 +6,5 @@ const userRouter = express.Router()
 
 userRouter.get("/getcurrentuser",isAuth,getCurrentUser)
 
+
 export default userRouter
