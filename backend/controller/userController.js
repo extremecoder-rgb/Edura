@@ -12,3 +12,13 @@ export const getCurrentUser = async(req,res) => {
 
     }
 }
+
+export const updateProfile = async (req,res) => {
+    try {
+        //request userId from userId, description, name from body
+        //check if req.file is present then upload on cloudinary in the file path
+        //find user and update name, description , photoUrl
+    } catch(error) {
+        //error console
+    }
+}
