@@ -12,6 +12,8 @@ import useGetCurrentUser from './customHooks/getCurrentUser'
 import { useSelector } from 'react-redux'
 import Profile from './pages/Profile'
 import EditProfile from './pages/EditProfile'
+import CreateCourses from './pages/Educator/CreateCourses.jsx'
+
 
 export const serverUrl = "http://localhost:8000"
 
@@ -35,6 +37,8 @@ function App() {
           <Route path="/dashboard" element={userData ?.role === "educator" ? <Dashboard /> : <Navigate to={"/signup"} />}/>
 
           <Route path="/courses" element={userData ?.role === "educator" ? <Courses /> : <Navigate to={"/signup"} />}/>
+
+          <Route path="/createcourse" element={userData ?.role === "educator" ? <CreateCourses /> : <Navigate to={"/signup"} />}/>
           
           
         </Routes>
