@@ -7,13 +7,19 @@ import Landing from './pages/Landing';
 import ForgetPassword from './pages/ForgetPassword'
 
 import {ToastContainer} from "react-toastify"
-import getCurrentUser from './customHooks/getCurrentUser'
+import useGetCurrentUser from './customHooks/getCurrentUser'
 import { useSelector } from 'react-redux'
 import Profile from './pages/Profile'
+import EditProfile from './pages/EditProfile'
+
 export const serverUrl = "http://localhost:8000"
+
 function App() { 
-  getCurrentUser()
+  // Call the hook inside the component
+  useGetCurrentUser()
+  
   const {userData} = useSelector(state=>state.user)
+  
   return (
     <>
     <ToastContainer />
@@ -23,7 +29,8 @@ function App() {
           <Route path="/signup" element={!userData ? <SignUp />: <Navigate to={"/home"} />} />
           <Route path="/signin" element={<Login/>} />
           <Route path="/profile" element={userData ? <Profile /> :<Navigate to={"/signup"}/>} />
-          <Route path="/forget" element={!userData ? <ForgetPassword /> : <Navigate to={"/home"} />}/>
+          <Route path="/forget" element={userData ? <ForgetPassword /> : <Navigate to={"/signup"} />}/>
+          <Route path="/editprofile" element={userData ? <EditProfile /> : <Navigate to={"/signup"} />}/>
         </Routes>
     </>
   )

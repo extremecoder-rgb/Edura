@@ -1,4 +1,5 @@
 import User from "../model/userModel.js";
+import uploadOnCloudinary from "../config/cloudinary.js";
 
 export const getCurrentUser = async (req, res) => {
   try {
@@ -20,9 +21,14 @@ export const getCurrentUser = async (req, res) => {
 
 export const updateProfile = async (req, res) => {
   try {
+    console.log("🔍 updateProfile called with:");
+    console.log("req.body:", req.body);
+    console.log("req.file:", req.file);
+    console.log("req.userId:", req.userId);
+    
     const userId = req.userId;
 
-    const { name, about, photoUrl } = req.body;
+    const { name, description } = req.body; // Changed from 'about' to 'description' to match frontend
 
     const user = await User.findById(userId);
     if (!user) {
@@ -34,30 +40,41 @@ export const updateProfile = async (req, res) => {
 
     // Upload to Cloudinary if file is present
     if (req.file) {
-      const result = await cloudinary.uploader.upload(req.file.path, {
-        folder: "user_profiles",
-        resource_type: "image",
-      });
-      user.photoUrl = result.secure_url;
+      console.log("📁 File detected, uploading to Cloudinary...");
+      try {
+        const result = await uploadOnCloudinary(req.file.path);
+        if (result) {
+          user.photoUrl = result;
+          console.log("✅ Cloudinary upload successful:", result);
+        }
+      } catch (cloudinaryError) {
+        console.error("❌ Cloudinary upload error:", cloudinaryError);
+        return res.status(500).json({
+          success: false,
+          message: "Failed to upload image",
+        });
+      }
+    } else {
+      console.log("📁 No file detected in request");
     }
 
     if (name) user.name = name;
-    if (about) user.about = about;
-    if (photoUrl) user.photoUrl = photoUrl;
+    if (description) user.description = description; // Changed from 'about' to 'description'
 
     const updatedUser = await user.save();
+    console.log("✅ User updated successfully");
 
     res.status(200).json({
       message: "Profile updated successfully",
       user: {
         id: updatedUser._id,
         name: updatedUser.name,
-        about: updatedUser.about,
+        description: updatedUser.description, // Changed from 'about' to 'description'
         photoUrl: updatedUser.photoUrl,
       },
     });
   } catch (error) {
-    console.error("Error in updating profile :- ", error);
+    console.error("❌ Error in updating profile:", error);
     res.status(500).json({
       success: false,
       message: "Internal Server Error",

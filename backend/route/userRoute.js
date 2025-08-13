@@ -1,9 +1,19 @@
-import express from "express"
-import isAuth from "../middleware/isAuth.js"
-import { getCurrentUser } from "../controller/userController.js"
+import express from "express";
+import isAuth from "../middleware/isAuth.js";
+import { getCurrentUser, updateProfile } from "../controller/userController.js";
+import { uploadMiddleware } from "../middleware/multer.js"; // ✅ use custom middleware with logging
 
-const userRouter = express.Router()
+const userRouter = express.Router();
 
-userRouter.get("/getcurrentuser",isAuth,getCurrentUser)
+// Get logged-in user's data
+userRouter.get("/getcurrentuser", isAuth, getCurrentUser);
 
-export default userRouter
+// Update profile with optional image
+userRouter.post(
+  "/profile",
+  isAuth,
+  uploadMiddleware, // ✅ better error handling + logs
+  updateProfile
+);
+
+export default userRouter;

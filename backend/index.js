@@ -12,8 +12,15 @@ dotenv.config()
 
 const port = process.env.PORT
 const app = express()
+
+// Middleware for parsing JSON and form data
 app.use(express.json())
+app.use(express.urlencoded({ extended: true }))
 app.use(cookieParser())
+
+// Serve static files from uploads directory
+app.use('/uploads', express.static('uploads'))
+
 app.use(cors({
     origin:"http://localhost:5173",
     credentials:true
@@ -25,6 +32,16 @@ app.use("/api/user",userRouter)
 app.get("/",(req,res)=>{
     res.send("Hello I am Backend server, Nice to meet you Developer")
 })
+
+// Global error handler
+app.use((err, req, res, next) => {
+  console.error('Global error handler:', err);
+  res.status(500).json({
+    success: false,
+    message: 'Internal Server Error',
+    error: process.env.NODE_ENV === 'development' ? err.message : 'Something went wrong'
+  });
+});
 
 app.listen(port, ()=>{
     console.log("Server started")
