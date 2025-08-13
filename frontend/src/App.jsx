@@ -5,7 +5,8 @@ import SignUp from './pages/SignUp'
 import Login from './pages/Login'
 import Landing from './pages/Landing';
 import ForgetPassword from './pages/ForgetPassword'
-
+import Dashboard from './pages/Educator/Dashboard'
+import Courses from "./pages/Educator/Courses"
 import {ToastContainer} from "react-toastify"
 import useGetCurrentUser from './customHooks/getCurrentUser'
 import { useSelector } from 'react-redux'
@@ -15,7 +16,6 @@ import EditProfile from './pages/EditProfile'
 export const serverUrl = "http://localhost:8000"
 
 function App() { 
-  // Call the hook inside the component
   useGetCurrentUser()
   
   const {userData} = useSelector(state=>state.user)
@@ -31,6 +31,12 @@ function App() {
           <Route path="/profile" element={userData ? <Profile /> :<Navigate to={"/signup"}/>} />
           <Route path="/forget" element={userData ? <ForgetPassword /> : <Navigate to={"/signup"} />}/>
           <Route path="/editprofile" element={userData ? <EditProfile /> : <Navigate to={"/signup"} />}/>
+
+          <Route path="/dashboard" element={userData ?.role === "educator" ? <Dashboard /> : <Navigate to={"/signup"} />}/>
+
+          <Route path="/courses" element={userData ?.role === "educator" ? <Courses /> : <Navigate to={"/signup"} />}/>
+          
+          
         </Routes>
     </>
   )
