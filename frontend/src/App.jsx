@@ -13,12 +13,14 @@ import { useSelector } from 'react-redux'
 import Profile from './pages/Profile'
 import EditProfile from './pages/EditProfile'
 import CreateCourses from './pages/Educator/CreateCourses.jsx'
-
+import getCreatorCourse from './customHooks/getCreatorCourse.js'
+import EditCourse from './pages/Educator/EditCourse'
 
 export const serverUrl = "http://localhost:8000"
 
 function App() { 
   useGetCurrentUser()
+  getCreatorCourse()
   
   const {userData} = useSelector(state=>state.user)
   
@@ -39,6 +41,8 @@ function App() {
           <Route path="/courses" element={userData ?.role === "educator" ? <Courses /> : <Navigate to={"/signup"} />}/>
 
           <Route path="/createcourse" element={userData ?.role === "educator" ? <CreateCourses /> : <Navigate to={"/signup"} />}/>
+
+          <Route path="/editcourse/:courseId" element={userData ?.role === "educator" ? <EditCourse /> : <Navigate to={"/signup"} />}/>
           
           
         </Routes>
