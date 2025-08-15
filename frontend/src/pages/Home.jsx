@@ -6,8 +6,11 @@ import ai from "../assets/ai.png"
 import ai1 from "../assets/searchAi.png"
 import Logos from '../component/Logos';
 import ExploreCourses from '../component/ExploreCourses';
+import CardPage from '../component/CardPage';
+import { useNavigate } from 'react-router-dom';
 
 const Home = () => {
+  const navigate = useNavigate()
   return (
     <div className='w-[100%] overflow-hidden'>
       <div className='w-[100%] lg:h-[140vh] h-[70vh] relative'>
@@ -19,7 +22,7 @@ const Home = () => {
         <div className='absolute lg:top-[30%] top-[75%] md:top-[80%] w-[100%] flex items-center justify-center gap-3 flex-wrap'>
           <button className='px-[20px] py-[10px] border-2 
             lg:border-white border-black lg:text-white text-black rounded-[10px] text-[18px] 
-            font-light flex gap-2 cursor-pointer'>
+            font-light flex gap-2 cursor-pointer' onClick={()=>navigate("/allcourses")}>
             View All Courses
             <SiViaplay className='w-[30px] h-[30px] lg:fill-white fill-black'/>
           </button>
@@ -35,6 +38,7 @@ const Home = () => {
       </div>
       <Logos />
       <ExploreCourses/>
+      <CardPage/>
     </div>
   );
 };
