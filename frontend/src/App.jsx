@@ -15,13 +15,14 @@ import EditProfile from './pages/EditProfile'
 import CreateCourses from './pages/Educator/CreateCourses.jsx'
 import getCreatorCourse from './customHooks/getCreatorCourse.js'
 import EditCourse from './pages/Educator/EditCourse'
+import getPublishedCourse from './customHooks/getPublishedCourse.js'
 
 export const serverUrl = "http://localhost:8000"
 
 function App() { 
   useGetCurrentUser()
   getCreatorCourse()
-  
+  getPublishedCourse()
   const {userData} = useSelector(state=>state.user)
   
   return (
