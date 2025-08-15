@@ -97,7 +97,7 @@ export const createLecture = async (req,res) => {
     try{
         const {lectureTitle} = req.body
         const {courseId} = req.params
-        if(lectureTitle || courseId){
+        if(!lectureTitle || !courseId){
             return res.status(400).json({message:"lectureTitle is required"})
         }
         const lecture = await Lecture.create({lectureTitle})

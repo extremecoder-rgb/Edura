@@ -126,7 +126,7 @@ function EditCourse() {
         <FaArrowLeftLong className='top-[20%] md:top-[20%] absolute left-[0] md:left-[2%] w-[22px] h-[22px] cursor-pointer' onClick={()=>navigate("/courses")}/>
         <h2 className='text-2xl font-semibold md:pl-[60px]'>Add Detail Information regarding the course</h2>
         <div className='space-x-2 space-y-2'>
-          <button className='bg-black text-white px-4 py-2 rounded-md'>Go to lecture page</button>
+          <button className='bg-black text-white px-4 py-2 rounded-md' onClick={()=>navigate(`/createlecture/${selectCourse?._id}`)}>Go to lecture page</button>
         </div>
       </div>
 
