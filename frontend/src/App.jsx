@@ -19,6 +19,7 @@ import getPublishedCourse from './customHooks/getPublishedCourse.js'
 import AllCourses from './pages/AllCourses.jsx'
 import CreateLecture from './pages/Educator/CreateLecture.jsx'
 import EditLecture from './pages/Educator/EditLecture.jsx'
+import ViewLectures from './pages/ViewLectures.jsx'
 import ViewCourse from './pages/ViewCourse.jsx'
 import ScrollToTop from './component/ScrollToTop.jsx'
 
@@ -58,6 +59,8 @@ function App() {
           <Route path="/editlecture/:courseId/:lectureId" element={userData ?.role === "educator" ? <EditLecture /> : <Navigate to={"/signup"} />}/>
 
           <Route path="/viewcourse/:courseId" element={userData ?.role === "educator" ? <ViewCourse /> : <Navigate to={"/signup"} />}/>
+
+          <Route path="/viewlecture/:courseId" element={userData ?.role === "educator" ? <ViewLectures /> : <Navigate to={"/signup"} />}/>
           
           
         </Routes>

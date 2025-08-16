@@ -51,12 +51,16 @@ function ViewCourse() {
   },[selectedCourse])
 
   const checkEnrollment = () => {
-    const verify = 
+    const verify = userData?.enrolledCourses?.some(c => (typeof c === 'string' ? c : c._id).toString() === courseId?.toString())
+    if(verify){
+      setIsEnrolled(true)
+    }
   }
 
   useEffect(() => {
-    fetchCourseData();
-  }, [courseData, courseId])
+    fetchCourseData()
+    checkEnrollment()
+  }, [courseData, courseId, userData])
 
   useEffect(()=>{
     if(creatorData?._id && courseData.length > 0){
@@ -149,11 +153,13 @@ function ViewCourse() {
                 <li> ✅ Lifetime access to course materials</li>
               </ul>
 
-              <button className="bg-[black] text-white px-6 py-2 rounded hover:bg-gray-700 mt-3 cursor-pointer"
+              {!isEnrolled ?<button className="bg-[black] text-white px-6 py-2 rounded hover:bg-gray-700 mt-3 cursor-pointer"
               onClick={()=>handleEnroll(userData._id,courseId)}
               >
                 Enroll Now
-              </button>
+              </button> : <button className="bg-green-100 text-green-500 px-6 py-2 rounded hover:bg-gray-700 mt-3 cursor-pointer" onClick={()=>navigate(`/viewlecture/${courseId}`)}>
+                Watch Now
+              </button>}
             </div>
           </div>
         </div>
