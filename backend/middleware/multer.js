@@ -28,7 +28,7 @@ const storage = multer.diskStorage({
 const upload = multer({ 
   storage: storage,
   limits: {
-    fileSize: 5 * 1024 * 1024, // 5MB limit
+    fileSize: 500 * 1024 * 1024, // 500MB limit for videos
   },
   fileFilter: (req, file, cb) => {
     console.log('🔍 Multer fileFilter - file mimetype:', file.mimetype);
@@ -37,12 +37,14 @@ const upload = multer({
       size: file.size,
       fieldname: file.fieldname 
     });
-    if (file.mimetype.startsWith('image/')) {
+    
+    // Allow both images and videos
+    if (file.mimetype.startsWith('image/') || file.mimetype.startsWith('video/')) {
       console.log('✅ File accepted');
       cb(null, true);
     } else {
-      console.log('❌ File rejected - not an image');
-      cb(new Error('Only image files are allowed!'), false);
+      console.log('❌ File rejected - not an image or video');
+      cb(new Error('Only image and video files are allowed!'), false);
     }
   },
   onError: function(err, next) {
@@ -62,9 +64,9 @@ const uploadMiddleware = (req, res, next) => {
     if (err) {
       console.log('💥 Upload middleware error:', err);
       if (err instanceof multer.MulterError) {
-        if (err.code === 'LIMIT_FILE_SIZE') {
-          return res.status(400).json({ message: 'File too large. Max size is 5MB.' });
-        }
+                        if (err.code === 'LIMIT_FILE_SIZE') {
+           return res.status(400).json({ message: 'File too large. Max size is 500MB.' });
+         }
         return res.status(400).json({ message: `Upload error: ${err.message}` });
       }
       return res.status(500).json({ message: `Server error: ${err.message}` });

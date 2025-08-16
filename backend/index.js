@@ -33,6 +33,10 @@ app.get("/",(req,res)=>{
     res.send("Hello I am Backend server, Nice to meet you Developer")
 })
 
+app.get("/test",(req,res)=>{
+    res.json({message: "Backend is working!", timestamp: new Date().toISOString()})
+})
+
 
 app.use((err, req, res, next) => {
   console.error('Global error handler:', err);
@@ -44,6 +48,6 @@ app.use((err, req, res, next) => {
 });
 
 app.listen(port, ()=>{
-    console.log("Server started")
+    console.log(`🚀 Server started on port ${port}`)
     connectDB() 
 })

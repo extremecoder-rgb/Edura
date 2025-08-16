@@ -31,17 +31,21 @@ function EditCourse() {
 
   const handleThumbnail = (e) => {
     const file = e.target.files[0]
-    setBackendImage(file)
-    setFrontendImage(URL.createObjectURL(file))
+    if (file) {
+      setBackendImage(file)
+      setFrontendImage(URL.createObjectURL(file))
+      toast.success("Thumbnail uploaded successfully!")
+    }
   }
 
   const getCourseById = async () => {
     try{
+      console.log("🔍 Fetching course with ID:", courseId)
       const result = await axios.get(serverUrl + `/api/course/getcourse/${courseId}`, {withCredentials:true})
       setSelectCourse(result.data)
-      console.log(result.data)
+      console.log("✅ Course fetched successfully:", result.data)
     } catch(error) {
-        console.log(error)
+        console.error("❌ Error fetching course:", error)
     }
   }
 
@@ -92,8 +96,10 @@ function EditCourse() {
         dispatch(setCourseData(filterCourses))
       }
       setLoading(false)
-      navigate("/courses")
-      toast.success("Course Updated Successfully")
+      toast.success("Course Updated Successfully!")
+      setTimeout(() => {
+        navigate("/courses")
+      }, 1000)
     } catch(error){
       console.log(error)
       setLoading(false)
@@ -102,9 +108,14 @@ function EditCourse() {
   }
 
   const handleRemoveCourse = async () => {
+    // Add confirmation dialog
+    if (!window.confirm("Are you sure you want to remove this course? This action cannot be undone.")) {
+      return
+    }
+    
     setLoading1(true)
     try{
-      const result = await axios.delete(serverUrl + `/api/course/remove/${courseId} `, {withCredentials:true})
+      const result = await axios.delete(serverUrl + `/api/course/remove/${courseId}`, {withCredentials:true})
       console.log(result.data)
       const filterCourses = courseData.filter(c=>c._id !== courseId)
       dispatch(setCourseData(filterCourses))
@@ -114,7 +125,7 @@ function EditCourse() {
     } catch(error) {
       console.log(error)
       setLoading1(false)
-      toast.error(error.response.data.message)
+      toast.error(error.response?.data?.message || "Failed to remove course")
     }
   }
 
@@ -126,7 +137,20 @@ function EditCourse() {
         <FaArrowLeftLong className='top-[20%] md:top-[20%] absolute left-[0] md:left-[2%] w-[22px] h-[22px] cursor-pointer' onClick={()=>navigate("/courses")}/>
         <h2 className='text-2xl font-semibold md:pl-[60px]'>Add Detail Information regarding the course</h2>
         <div className='space-x-2 space-y-2'>
-          <button className='bg-black text-white px-4 py-2 rounded-md' onClick={()=>navigate(`/createlecture/${selectCourse?._id}`)}>Go to lecture page</button>
+          <button 
+            className='bg-black text-white px-4 py-2 rounded-md hover:bg-gray-700 transition-colors' 
+            onClick={()=>{
+              if (selectCourse?._id) {
+                console.log("🔍 Navigating to lecture page with courseId:", selectCourse._id)
+                navigate(`/createlecture/${selectCourse._id}`)
+              } else {
+                toast.error("Course not loaded yet. Please wait.")
+              }
+            }}
+            disabled={!selectCourse?._id}
+          >
+            Go to lecture page
+          </button>
         </div>
       </div>
 
@@ -134,11 +158,27 @@ function EditCourse() {
       < div className='bg-gray-50 p-6 rounded-md'>
       <h2 className='text-lg font-medium mb-4'>Basic Course Information</h2>
       <div className='space-x-2 space-y-2'>
-        {!isPublished?<button className='bg-green-100 text-green-600 px-4 py-2 rounded-md border-1' onClick={()=>setIsPublished(prev=>!prev)}>
-          Click to Publish
-        </button>:<button className='bg-red-100 text-red-600 px-4 py-2 rounded-md border-1' onClick={()=>setIsPublished(prev=>!prev)}>Click to UnPublish</button>}
-        <button className='bg-red-600 text-white px-4 py-2 rounded-md' onClick={handleRemoveCourse}>
-          Remove Course
+        {!isPublished ? (
+          <button 
+            className='bg-green-100 text-green-600 px-4 py-2 rounded-md border border-green-300 hover:bg-green-200 transition-colors' 
+            onClick={()=>setIsPublished(prev=>!prev)}
+          >
+            Click to Publish
+          </button>
+        ) : (
+          <button 
+            className='bg-red-100 text-red-600 px-4 py-2 rounded-md border border-red-300 hover:bg-red-200 transition-colors' 
+            onClick={()=>setIsPublished(prev=>!prev)}
+          >
+            Click to UnPublish
+          </button>
+        )}
+        <button 
+          className='bg-red-600 text-white px-4 py-2 rounded-md hover:bg-red-700 transition-colors' 
+          onClick={handleRemoveCourse}
+          disabled={loading1}
+        >
+          {loading1 ? <ClipLoader size={20} color="white" /> : "Remove Course"}
         </button>
       </div>
 
@@ -198,17 +238,39 @@ function EditCourse() {
         </div>
         {/* for thumbnail */}
         <div>
-            <label htmlFor="" className='block text-sm font-medium text-gray-700 mb-1'>Course Thumbnail</label>
-            <input type="file" hidden ref={thumb} accept='image/*' onChange={handleThumbnail}/>
+            <label htmlFor="thumbnail" className='block text-sm font-medium text-gray-700 mb-1'>Course Thumbnail</label>
+            <input type="file" hidden ref={thumb} accept='image/*' onChange={handleThumbnail} id="thumbnail"/>
           </div>
         <div className='relative w-[300px] h-[170px]'>
-            <img src={frontendImage} alt="" className='w-[100%] h-[100%] border-1 border-black rounded-[5px]' onClick={()=>thumb.current.click()}/>
-            <FaEdit className='w-[20px] h-[20px] absolute top-2 right-2' onClick={()=>thumb.current.click()}/>
+            <img 
+              src={frontendImage} 
+              alt="Course thumbnail" 
+              className='w-[100%] h-[100%] border border-gray-300 rounded-md object-cover cursor-pointer hover:opacity-90 transition-opacity' 
+              onClick={()=>thumb.current.click()}
+            />
+            <div className='absolute inset-0 flex items-center justify-center bg-black bg-opacity-0 hover:bg-opacity-20 transition-all rounded-md'>
+              <FaEdit className='w-[20px] h-[20px] text-white opacity-0 hover:opacity-100 transition-opacity' onClick={()=>thumb.current.click()}/>
+            </div>
+            <div className='absolute bottom-2 left-2 text-xs text-white bg-black bg-opacity-50 px-2 py-1 rounded'>
+              Click to change
+            </div>
         </div>
 
         <div className='flex items-center justify-start gap-[15px]'>
-          <button className='bg-[#e9e8e8] hover:bg-red-200 text-black border-1 border-black cursor-pointer px-4 py-2 rounded-md' onClick={()=>navigate("/courses")}>Cancel</button>
-          <button className='bg-black text-white px-7 py-2 rounded-md hover:bg-gray-500 cursor-pointer' onClick={handleEditCourse}>{loading? <ClipLoader size={30} color='white'/> : "Save"}</button>
+          <button 
+            className='bg-gray-200 hover:bg-gray-300 text-black border border-gray-300 cursor-pointer px-4 py-2 rounded-md transition-colors' 
+            onClick={()=>navigate("/courses")}
+            disabled={loading}
+          >
+            Cancel
+          </button>
+          <button 
+            className='bg-black text-white px-7 py-2 rounded-md hover:bg-gray-700 cursor-pointer transition-colors' 
+            onClick={handleEditCourse}
+            disabled={loading}
+          >
+            {loading ? <ClipLoader size={20} color='white'/> : "Save"}
+          </button>
         </div>
 
       </form>

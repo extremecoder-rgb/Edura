@@ -16,35 +16,47 @@ function CreateLecture() {
     const [loading,setLoading] = useState(false)
     const dispatch = useDispatch()
     const {lectureData} = useSelector(state=>state.lecture)
+    
+    console.log("🔍 CreateLecture component rendered with courseId:", courseId)
 
     const handleCreateLecture = async () => {
+      console.log("🔍 handleCreateLecture called with:", { courseId, lectureTitle })
+      
+      // Validate lecture title
+      if (!lectureTitle.trim()) {
+        toast.error("Please enter a lecture title")
+        return
+      }
+      
       setLoading(true)
       try{
-        const result = await axios.post(serverUrl + `/api/course/createlecture/${courseId}`, {lectureTitle}, {withCredentials:true})
-        console.log(result.data)
+        const result = await axios.post(serverUrl + `/api/course/createlecture/${courseId}`, {lectureTitle: lectureTitle.trim()}, {withCredentials:true})
+        console.log("✅ Lecture created successfully:", result.data)
         dispatch(setLectureData([...lectureData, result.data.lecture]))
         setLoading(false)
         toast.success("Lecture Added")
         setLectureTitle("")
       } catch(error) {
-        console.log(error)
+        console.error("❌ Error creating lecture:", error)
         setLoading(false)
-        toast.error(error.response.data.message)
+        toast.error(error.response?.data?.message || "Failed to create lecture")
       }
     }
 
     useEffect(()=>{
+      console.log("🔍 useEffect triggered, fetching lectures for courseId:", courseId)
       const getCourseLecture = async () => {
         try{
           const result = await axios.get(serverUrl + `/api/course/courselecture/${courseId}`, {withCredentials:true})
-          console.log(result.data)
-          dispatch(setLectureData(result.data.lectures))
+          console.log("✅ Lectures fetched successfully:", result.data)
+          dispatch(setLectureData(result.data.lectures || []))
         } catch(error) {
-          console.log(error)
+          console.error("❌ Error fetching lectures:", error)
+          dispatch(setLectureData([]))
         }
       }
       getCourseLecture()
-    },[])
+    },[courseId])
   return (
     <div className="min-h-screen bg-gray-100 flex items-center justify-center p-4">
       <div className="bg-white shadow-xl rounded-xl w-full max-w-2xl p-6">
@@ -74,7 +86,7 @@ function CreateLecture() {
             Back to course
           </button>
           <button className="px-5 py-2 rounded-md bg-black text-white hover:bg-gray-700 transition-all text-sm font-medium shadow" disabled={loading} onClick={handleCreateLecture}>
-            {loading ? <ClipLoader size={30} color="white" />:" + Create Lecture"}
+            {loading ? <ClipLoader size={20} color="white" /> : "+ Create Lecture"}
           </button>
         </div>
         {/* lecture list */}

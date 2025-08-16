@@ -19,12 +19,20 @@ function EditLecture() {
   const [loading,setLoading] = useState(false)
   const [loading1,setLoading1] = useState(false)
   const dispatch = useDispatch()
-  const formdata = new FormData()
-  formdata.append("lectureTitle",lectureTitle)
-  formdata.append("videoUrl",videoUrl)
-  formdata.append("isPreviewFree",isPreviewFree)
 
   const handleEditLecture = async () => {
+    const formdata = new FormData()
+    formdata.append("lectureTitle",lectureTitle)
+    if (videoUrl) {
+      formdata.append("videoUrl",videoUrl)
+    }
+    formdata.append("isPreviewFree",isPreviewFree.toString())
+    
+    console.log("🔍 FormData contents:")
+    for (let [key, value] of formdata.entries()) {
+      console.log(key, value)
+    }
+    
     setLoading(true)
     try{
       const result = await axios.post(serverUrl + `/api/course/editlecture/${lectureId}`, formdata, {withCredentials:true})
